@@ -1,21 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { CreateSealDto } from './dto/create-seal.dto';
-import { UpdateSealDto } from './dto/update-seal.dto';
-import { Seals } from './seals.interface';
-import { Model } from 'mongoose';
-const fs = require('fs')
-const pdf = require('html-pdf')
-var convert = require('xml-js');
-@Injectable()
-export class SealsService {
-
-  constructor(
-    @Inject('SEALS_MODEL')
-    private sealsModel: Model<Seals>,
-  ) {}
-
-
-  test = {
+{
     "LoteRps": {
         "-xmlns": "http://www.el.com.br/nfse/xsd/el-nfse.xsd",
         "-xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
@@ -125,64 +108,4 @@ export class SealsService {
             }
         }
     }
-}
-
-  /*generatePDF = () => {
-
-    const html = fs.readFileSync('index.html').toString()
-      
-    const options = {
-        type: 'pdf',
-        format: 'A4',
-        orientation: 'portrait'
-    }
-
-    pdf.create(html, options).toBuffer((err, buffer) => {
-                      return buffer
-    })
-}*/
-
- 
-    async create(createSealDto: CreateSealDto) {
-   const createdSeal = new this.sealsModel(createSealDto);
-       createdSeal.save();  
-
-       
-//var json = require('fs').readFileSync('test.json', 'utf8');
-var options = {compact: true, ignoreComment: true, spaces: 4};
-var result = convert.json2xml(this.test, options);
-console.log(result);
-      return result
-    }
-  
-
-  findAll() {
-
-
-    
-    var a = this.sealsModel.find().exec()
-    return this.sealsModel.aggregate.lookup({
-          from: 'seals',
-          localField: 'client_id',
-          foreignField: '_id',
-          as: 'client' 
-  })
-}
-
-  findOne(id: number) {
-    return this.sealsModel.findOne({id: id})
-  }
-
-  async update(id: String, updateSealDto: UpdateSealDto) {
-    return await this.sealsModel.updateOne({_id: id.trim() }, updateSealDto).exec();
-    
-  }
-
-  async remove(id: string) {
-    //return await this.stockModel.deleteOne({id: id});
-    return await this.sealsModel.deleteOne({ _id: id.trim() }).exec();
-    
-    
-  }
-
 }

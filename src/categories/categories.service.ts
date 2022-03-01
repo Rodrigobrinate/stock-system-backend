@@ -14,18 +14,8 @@ export class CategoriesService {
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-
-   
    const createdStock = new this.categoryModel(createCategoryDto);
     return   createdStock.save();
-
-
- 
-
-
-
-    
-  
   }
 
  

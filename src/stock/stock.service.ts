@@ -28,19 +28,10 @@ export class StockService {
 
 async search(search): Promise<Stock[]> {
   const product =  this.stockModel.find({
-    
-    
-  
        $or: [
          {name: {$regex: search}},
         {categories: {$regex: search}},
-        {product_key: {$regex: search}}
-      
-      ]
-
-    
-    
-  
+        {product_key: {$regex: search}} ]
 })
 
 

@@ -1,10 +1,8 @@
 import * as mongoose from 'mongoose';
 
 export const SealsSchema = new mongoose.Schema({
-
-    product_key: String,
-    name: String,
-    quantities: Number,
+    product_id: Object,
+    client_id: String,
     price: Number,
 
 })
