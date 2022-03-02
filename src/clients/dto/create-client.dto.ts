@@ -1,11 +1,11 @@
 export class CreateClientDto {
-    client_key: String;
-    name: String;
-    telefone: Number;
-    addres: String;
-    district: String;
-    city: String;
-    state: String;
-    cpf: Number;
-    rg: Number;
+    client_key: string;
+    name: string;
+    phone: string;
+    addres: string;
+    district: string;
+    city: string;
+    state: string;
+    cpf: string;
+    rg: string;
 }

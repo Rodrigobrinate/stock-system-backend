@@ -1,6 +1,6 @@
 export class CreateSealDto {
 
-    product_id: Object;
-    client_id: String;
-    price: Number;
+    product_id: object;
+    client_id: number;
+    price: number;
 }

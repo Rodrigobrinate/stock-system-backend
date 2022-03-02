@@ -1,8 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CreateSealDto } from './dto/create-seal.dto';
 import { UpdateSealDto } from './dto/update-seal.dto';
-import { Seals } from './seals.interface';
+//import { Seals } from './seals.interface';
 import { Model } from 'mongoose';
+import {createQueryBuilder, getConnection}from 'typeorm'
+import { Seals } from './entities/seal.entity';
+import { Client } from 'src/clients/entities/client.entity';
 const fs = require('fs')
 const pdf = require('html-pdf')
 var convert = require('xml-js');
@@ -144,8 +147,15 @@ export class SealsService {
 
  
     async create(createSealDto: CreateSealDto) {
-   const createdSeal = new this.sealsModel(createSealDto);
-       createdSeal.save();  
+  /* const createdSeal = new this.sealsModel(createSealDto);
+       createdSeal.save();  */
+
+       await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(Seals)
+    .values(createSealDto)
+    .execute();
 
        
 //var json = require('fs').readFileSync('test.json', 'utf8');
@@ -156,17 +166,27 @@ console.log(result);
     }
   
 
-  findAll() {
+  async findAll() {
 
 
+    const a = await createQueryBuilder("Client")
+    .innerJoin("Client.id", "Seals")
+    //.leftJoinAndSelect(Seals, "Seals", "Seals.client_id = Client.id")
+   // .innerJoin("seals.cleints", "clients", "clients.id = :id", { id: this.Client.id })
+    .getRawMany()
+    return a
+/*
     
-    var a = this.sealsModel.find().exec()
-    return this.sealsModel.aggregate.lookup({
+    var a = this.sealsModel.find().populate('client_id')
+    var b = this.sealsModel.aggregate([{
+        $lookup: {
           from: 'seals',
           localField: 'client_id',
           foreignField: '_id',
-          as: 'client' 
-  })
+          as: 'clients' 
+        }
+    }])    
+    return a*/
 }
 
   findOne(id: number) {
@@ -174,13 +194,13 @@ console.log(result);
   }
 
   async update(id: String, updateSealDto: UpdateSealDto) {
-    return await this.sealsModel.updateOne({_id: id.trim() }, updateSealDto).exec();
+    //return await this.sealsModel.updateOne({_id: id.trim() }, updateSealDto).exec();
     
   }
 
   async remove(id: string) {
     //return await this.stockModel.deleteOne({id: id});
-    return await this.sealsModel.deleteOne({ _id: id.trim() }).exec();
+    //return await this.sealsModel.deleteOne({ _id: id.trim() }).exec();
     
     
   }

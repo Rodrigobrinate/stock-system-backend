@@ -2,12 +2,13 @@
 
 export class CreateStockDto {
 
-product_key: String;
-  name: String;
-  brand: String;
-  quantities: Number;
-  sale_price: Number;
-  cost_price: Number;
-  quatities_sold: Number;
-  categories: String;
+product_key: string;
+  name: string;
+  brand: string;
+  quantities: number;
+  sale_price: number;
+  brand_id: number;
+  cost_price: number;
+  quatities_sold: number;
+  category_id: number;
 }

@@ -1,8 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { Client } from './client.interface';
+//import { Client } from './client.interface';
 import { Model } from 'mongoose';
+import { Client } from './entities/client.entity';
+import { Connection, getConnection, getRepository,Like } from 'typeorm';
+import { connect } from 'http2';
 
 @Injectable()
 export class ClientsService {
@@ -13,27 +16,39 @@ export class ClientsService {
   ) {}
 
 
-  async create(createClientDto: CreateClientDto): Promise<Client> {
-   const createdClient = new this.clientModel(createClientDto);
-    return   createdClient.save();
+  async create(createClientDto: CreateClientDto) {
+    return await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(Client)
+    .values(createClientDto)
+    .execute();
+
   }
 
+
   async findAll(): Promise<Client[]> {
-    return this.clientModel.find().exec();
+    return await getRepository(Client)
+    .createQueryBuilder("clients").getMany()
   }
 
   findOne(id: number) {
     return `This action returns a #${id} client`;
   }
 
-  async search(search): Promise<Client[]> {
-    const client =  this.clientModel.find({
+  async search(search) {
+   /* const client =  this.clientModel.find({
          $or: [
            {name: {$regex: search}},
           {state: {$regex: search}},
           {district: {$regex: search}} ]
   })
-  return client
+  return client*/
+
+  const client = await getRepository(Client).find({name: Like('%'+search+'%')})
+return client
+
+
 }
 
   update(id: number, updateClientDto: UpdateClientDto) {
