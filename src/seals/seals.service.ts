@@ -3,9 +3,10 @@ import { CreateSealDto } from './dto/create-seal.dto';
 import { UpdateSealDto } from './dto/update-seal.dto';
 //import { Seals } from './seals.interface';
 import { Model } from 'mongoose';
-import {createQueryBuilder, getConnection}from 'typeorm'
+import {Connection, createQueryBuilder, getConnection, getRepository}from 'typeorm'
 import { Seals } from './entities/seal.entity';
 import { Client } from 'src/clients/entities/client.entity';
+import { Stock } from 'src/stock/entities/stock.entity';
 const fs = require('fs')
 const pdf = require('html-pdf')
 var convert = require('xml-js');
@@ -15,6 +16,7 @@ export class SealsService {
   constructor(
     @Inject('SEALS_MODEL')
     private sealsModel: Model<Seals>,
+    
   ) {}
 
 
@@ -150,18 +152,24 @@ export class SealsService {
   /* const createdSeal = new this.sealsModel(createSealDto);
        createdSeal.save();  */
 
-       await getConnection()
+       console.log(createSealDto)
+
+       return await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Seals)
     .values(createSealDto)
-    .execute();
+    .execute(); 
+    /*var c = getConnection().getRepository(Seals).save(createSealDto)
+     return c */
+
+    //return c.save({price: createSealDto.price, clientId: createSealDto.clientId})
 
        
 //var json = require('fs').readFileSync('test.json', 'utf8');
 var options = {compact: true, ignoreComment: true, spaces: 4};
 var result = convert.json2xml(this.test, options);
-console.log(result);
+//console.log(result);
       return result
     }
   
@@ -169,8 +177,8 @@ console.log(result);
   async findAll() {
 
 
-    const a = await createQueryBuilder("Client")
-    .innerJoin("Client.id", "Seals")
+    const a = await getRepository("seals").createQueryBuilder("seals")
+    .innerJoinAndSelect("seals.client", "client")
     //.leftJoinAndSelect(Seals, "Seals", "Seals.client_id = Client.id")
    // .innerJoin("seals.cleints", "clients", "clients.id = :id", { id: this.Client.id })
     .getRawMany()

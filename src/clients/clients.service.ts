@@ -17,6 +17,9 @@ export class ClientsService {
 
 
   async create(createClientDto: CreateClientDto) {
+    createClientDto.cnpj = '0'
+    console.log(createClientDto)
+    
     return await getConnection()
     .createQueryBuilder()
     .insert()

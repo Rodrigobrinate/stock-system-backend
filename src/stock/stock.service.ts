@@ -15,18 +15,29 @@ export class StockService {
   ) {}
 
   async create(createStockDto: CreateStockDto) {
+    createStockDto.created_date = new Date()
+    console.log(createStockDto)
     return await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Stock)
     .values(createStockDto)
-    .execute();
+    .execute(); 
 
   } 
 
   async findAll(): Promise<Stock[]> {
+    const a = await getRepository("seals").createQueryBuilder("seals")
+    
+    //.leftJoinAndSelect(Seals, "Seals", "Seals.client_id = Client.id")
+   // .innerJoin("seals.cleints", "clients", "clients.id = :id", { id: this.Client.id })
+    
     return await getRepository(Stock)
-    .createQueryBuilder("stock").getMany()
+    .createQueryBuilder("stock")
+    .innerJoinAndSelect("stock.brand", "brand")
+    .innerJoinAndSelect("stock.category", "category")
+    .innerJoinAndSelect("stock.fornecedores", "fornecedores")
+    .getRawMany()
   }
 
   async findOne(id: string): Promise<Stock> {

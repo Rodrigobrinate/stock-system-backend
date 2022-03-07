@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Seals } from 'src/seals/entities/seal.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Client {
@@ -10,6 +11,9 @@ export class Client {
 
   @Column({ length: 500 })
   name: string;
+
+  @OneToMany(()=> Seals, seals => seals.client)
+  seals: Seals;
 
   @Column('text')
   district: string;
@@ -24,11 +28,15 @@ export class Client {
   city: string;
 
   @Column()
-  state: string;
+  state: string; 
 
   @Column()
   cpf: string;
 
   @Column()
   rg: string;
+
+  @Column({nullable: true})
+  cnpj: string;
+  
 }
